@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { AuthContext } from "../context/Authcontext";
 
 const links = [
   { to: "/", label: "Home", icon: "home" },
@@ -26,6 +28,8 @@ const icons = {
 };
 
 export default function Navbar() {
+  const { user, logout } = useContext(AuthContext);
+
   return (
     <aside className="fixed left-0 top-0 z-50 flex h-screen w-60 flex-col border-r border-gray-100 bg-white">
       <div className="flex h-16 items-center gap-3 border-b border-gray-100 px-5">
@@ -76,15 +80,26 @@ export default function Navbar() {
       </nav>
 
       <div className="border-t border-gray-100 p-4">
-        <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-semibold text-white">
-            Rajj
+        {user ? (
+          <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-semibold text-white">
+              {user.name[0].toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-gray-900">{user.name}</p>
+              <button onClick={logout} className="truncate text-xs text-gray-400 hover:text-red-500">
+                Sign out
+              </button>
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-gray-900">User</p>
-            <p className="truncate text-xs text-gray-400">user@store.com</p>
-          </div>
-        </div>
+        ) : (
+          <NavLink
+            to="/signin"
+            className="flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+          >
+            Sign In
+          </NavLink>
+        )}
       </div>
     </aside>
   );

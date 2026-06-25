@@ -4,13 +4,13 @@ import Home from "../Pages/Home";
 import Products from "../Pages/Products";
 import Categories from "../Pages/Categories";
 import ProductDetails from "../Pages/ProductDetails";
+import SignIn from "../Pages/SignIn";
 import MainLayout from "../components/MainLayout";
 
 function AppRoutes() {
   return (
     <Routes>
 
-      {/* Layout wrapper */}
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="products" element={<Products />} />
@@ -18,7 +18,8 @@ function AppRoutes() {
         <Route path="product/:id" element={<ProductDetails />} />
       </Route>
 
-      {/* optional: fallback route */}
+      <Route path="/signin" element={<SignIn />} />
+
       <Route
         path="*"
         element={
