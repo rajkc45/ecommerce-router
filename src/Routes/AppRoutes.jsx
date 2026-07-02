@@ -8,6 +8,7 @@ import Login from "../Pages/Login";
 import MainLayout from "../components/Mainlayout";
 import SignUp from "../Pages/Signup";
 import Cart from "../Pages/Cart";
+import { ProtectedRoute, SemiProtectedRoute } from "./RouteGuard";
 
 
 function AppRoutes() {
@@ -19,11 +20,24 @@ function AppRoutes() {
         <Route path="products" element={<Products />} />
         <Route path="categories" element={<Categories />} />
         <Route path="product/:id" element={<ProductDetails />} />
-        <Route path="cart" element={<Cart />} />
+        <Route path="cart" element={
+        <ProtectedRoute><Cart />
+        </ProtectedRoute>
+      } />
+        
       </Route>
 
-      <Route path="/signin" element={<Login />} />
-      <Route path="/signup" element={<SignUp/>} />
+      <Route path="/signin" element={
+        <SemiProtectedRoute>
+          <Login />
+          </SemiProtectedRoute>
+        } />
+      <Route path="/signup" element={
+        <SemiProtectedRoute>
+          <SignUp />
+        </SemiProtectedRoute>
+      } />
+      
       <Route
         path="*"
         element={

@@ -20,7 +20,7 @@ export default function Cart() {
       );
 
       setCartItems(response.data.data.cart.items);
-      setTotal(response.data.data.summary.total);
+      setTotal(response.data.data.cart.summary.total);
     } catch (error) {
       console.log(error.response?.data || error);
     } finally {
@@ -59,7 +59,7 @@ export default function Cart() {
       <h1 className="text-3xl font-bold mb-6">My Cart</h1>
 
       {cartItems.length === 0 ? (
-        <h2>Your cart is empty.</h2>
+        <h2>kina na kina 🤪.</h2>
       ) : (
         <>
           {cartItems.map((item) => (

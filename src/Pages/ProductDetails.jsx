@@ -95,7 +95,7 @@ useEffect(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="flex items-center justify-center rounded-2xl bg-gray-50 p-8 dark:bg-gray-800">
           <img
-            src={product.name}
+            src={product.images[0]}
             alt={product.title}
             className="max-h-96 w-full object-contain"
           />
