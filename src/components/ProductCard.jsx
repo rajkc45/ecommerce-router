@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+
+const FALLBACK_IMG = "https://placehold.co/400x400?text=No+Image";
 
 export default function ProductCard({ product }) {
-  
+  const [imgSrc, setImgSrc] = useState(product.images?.[0] || FALLBACK_IMG);
+
   return (
     <Link
       to={`/product/${product.id}`}
@@ -10,15 +13,16 @@ export default function ProductCard({ product }) {
     >
       <div className="flex h-44 items-center justify-center bg-gray-50 p-4 dark:bg-gray-800">
         <img
-          src={product.thumbnail}
-          alt={product.title}
+          src={imgSrc}
+          alt={product.name}
+          onError={() => setImgSrc(FALLBACK_IMG)}
           className="h-full w-full object-contain transition-transform group-hover:scale-105"
         />
       </div>
 
       <div className="flex flex-1 flex-col gap-1 p-4">
         <h3 className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
-          {product.title}
+          {product.name}
         </h3>
         <p className="text-base font-bold text-indigo-600 dark:text-indigo-400">${product.price}</p>
       </div>

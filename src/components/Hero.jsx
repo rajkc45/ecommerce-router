@@ -11,7 +11,7 @@ export default function Hero() {
         </p>
 
         <h1 className="mb-4 text-4xl font-bold text-gray-900 sm:text-5xl dark:text-gray-100">
-          Raj Dada {data.user?.name || "Guest"},
+          Raj Dada {data.user?.name },
           <br />
           New StartUp / EndDown :
         </h1>

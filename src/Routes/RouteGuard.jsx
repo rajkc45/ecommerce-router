@@ -29,7 +29,7 @@ export function PublicRoute({ children }) {
 
 export function SemiProtectedRoute({ children }) {
   if (isUserLoggedin()) {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;

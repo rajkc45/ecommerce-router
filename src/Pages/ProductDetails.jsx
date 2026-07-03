@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../context/Authcontext";
+import { toast } from "sonner";
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const { user } = useContext(AuthContext);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -24,6 +27,10 @@ export default function ProductDetails() {
     getProduct();
   }, [id]);
   const addToCart = async () => {
+    if (user?.email === "guest@store.com") {
+      toast.error("Sign in to add items to your cart");
+      return;
+    }
   try {
     const token = localStorage.getItem("accessToken");
     console.log(token);
@@ -95,8 +102,9 @@ useEffect(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="flex items-center justify-center rounded-2xl bg-gray-50 p-8 dark:bg-gray-800">
           <img
-            src={product.images[0]}
-            alt={product.title}
+            src={product.images?.[0] || "https://placehold.co/600x600?text=No+Image"}
+            alt={product.name}
+            onError={(e) => { e.target.src = "https://placehold.co/600x600?text=No+Image"; }}
             className="max-h-96 w-full object-contain"
           />
         </div>
@@ -107,7 +115,7 @@ useEffect(() => {
           </p>
 
           <h1 className="mb-3 text-3xl font-bold text-gray-900 dark:text-gray-100">
-            {product.title}
+            {product.name}
           </h1>
 
           <div className="mb-4 flex items-center gap-3">
@@ -122,8 +130,13 @@ useEffect(() => {
           <p className="leading-relaxed text-gray-600 dark:text-gray-400">
             {product.description}
           </p>
-          <button  onClick={() => addToCart(product)} className="mt-6 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"> 
-            Add To CART </button>   
+          <button
+            onClick={() => addToCart(product)}
+            disabled={user?.email === "guest@store.com"}
+            className="mt-6 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+          >
+            {user?.email === "guest@store.com" ? "Sign in to purchase" : "Add To CART"}
+          </button>
         </div>
       </div>
     </div>

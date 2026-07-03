@@ -5,7 +5,7 @@ import axios from 'axios';
 import SignUp from "./Signup";
 
 export default function Login() {
-  const { login, guestLogin } = useContext(AuthContext);
+  const { login, guestLogin, userStatus } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -28,9 +28,9 @@ export default function Login() {
       );
     
       
-      const token= response.data.data.accessToken;
+      const token = response.data.data.accessToken;
       localStorage.setItem("accessToken", token);
-      console.log("TOKEN:", token);
+      await userStatus();
       navigate("/");
     } catch (error){
       console.log(error);
@@ -41,7 +41,6 @@ export default function Login() {
 
   const handleGuest = () => {
     guestLogin();
-    navigate("/");
   };
 
   return (

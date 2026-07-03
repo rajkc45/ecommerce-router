@@ -11,31 +11,18 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-useEffect(() => {
-  const getProducts = async () => {
-    try {
-      const response = await axios.get(
-        "https://ecommerce-api-ten-jade.vercel.app/api/v1/products"
-      );
 
-      setProducts(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  getProducts();
-}, []);
   useEffect(() => {
     setLoading(true);
     const url = category
-      ? `https://dummyjson.com/products/category/${category}`
-      : "https://dummyjson.com/products?limit=30";
+      ? `https://ecommerce-api-ten-jade.vercel.app/api/v1/products?category=${category}`
+      : "https://ecommerce-api-ten-jade.vercel.app/api/v1/products";
 
     axios
       .get(url)
       .then((res) => {
-        setProducts(res.data.products || []);
+        console.log(res.data.data.items, "products");
+        setProducts(res.data.data.items || []);
         setLoading(false);
       })
       .catch(() => {
