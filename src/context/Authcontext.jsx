@@ -1,69 +1,82 @@
-import { createContext, useState,useEffect } from "react";
-import axios from "axios";
+import { createContext, useState, useEffect, useCallback } from "react";
+import api from "../api/axios";
 
 export const AuthContext = createContext();
 
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  
+  const [loading, setLoading] = useState(
+    () => Boolean(localStorage.getItem("accessToken"))
+  );
 
-  const login = (email, password) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (email && password) {
-          setUser({ email, name: email.split("@")[0] });
-          resolve();
-        } else {
-          reject(new Error("Invalid credentials"));
-        }
-      }, 500);
+  const userStatus = useCallback(async () => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      return true;
+    }
+
+    try {
+      const response = await api.get("/auth/me");
+
+      console.log("User Status:", response.data);
+
+      const data = response.data?.data ?? response.data;
+      const userData = data?.user ?? data;
+
+      if (!userData) {
+        throw new Error("Unexpected /auth/me response shape");
+      }
+
+      setUser(userData);
+      return true;
+    } catch (error) {
+      console.error(error);
+
+      localStorage.removeItem("accessToken");
+      setUser(null);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const guestLogin = () => {
+    setUser({
+      name: "Guest",
+      email: "guest@store.com",
     });
   };
 
-  const guestLogin = () => {
-    setUser({ name: "Guest", email: "guest@store.com" });
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
+  // Check logged-in user when app starts
   useEffect(() => {
     userStatus();
-  }, []);
-  async function userStatus() {
-    let token = localStorage.getItem("accessToken");
-    console.log(token);
+  }, [userStatus]);
+
+  const logout = async () => {
     try {
-      let response = await axios.get(
-        "https://ecommerce-api-ten-jade.vercel.app/api/v1/auth/me",
-      {headers: {
-            Authorization: `Bearer ${token}`,
-      }});
-      console.log("userStaus", response);
-      console.log(response.data.data.user);
-      setUser(response.data.data.user);
+      await api.post("/auth/logout");
     } catch (error) {
-      localStorage.removeItem("accessToken");
-      console.log("error", error);
-      setUser(null);
+      console.log(error);
     }
-  }
+
+    localStorage.removeItem("accessToken");
+    setUser(null);
+  };
+
   const value = {
-    user: user,
-    setUser: setUser,
-    userStatus: userStatus,
+    user,
+    setUser,
+    userStatus,
+    loading,
     isAuthenticated: !!user,
-    login,
     guestLogin,
     logout,
-    //it is short form of if else(if authenticated true else false)
   };
 
   return (
-    <AuthContext.Provider value={ value }>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 }
-

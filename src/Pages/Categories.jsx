@@ -10,7 +10,7 @@ export default function Categories() {
   useEffect(() => {
   const fetchCategories = async () => {
     try {
-      const response = await api.get("/products/categories");
+      const response = await api.get("/categories");
 
       setCategories(response.data.data || []);
     } catch (error) {

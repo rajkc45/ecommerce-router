@@ -1,11 +1,10 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/Authcontext";
-import SignUp from "./Signup";
 import api from "../api/axios";
 
 export default function Login() {
-  const { login, guestLogin, userStatus } = useContext(AuthContext);
+  const { guestLogin, userStatus } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -24,13 +23,19 @@ export default function Login() {
         password,
       });
 
-      const token = response.data.data.accessToken;
+      const token = response.data?.data?.accessToken ?? response.data?.accessToken;
+
+      if (!token) {
+        throw new Error("Unexpected login response shape");
+      }
+
       localStorage.setItem("accessToken", token);
       await userStatus();
       navigate("/");
     } catch (error){
       console.log(error);
-      // setError("Invalid email or password");
+      setError(error?.response?.data?.message || "Invalid email or password");
+    } finally {
       setSubmitting(false);
     }
   };
