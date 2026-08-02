@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 import { AuthContext } from "../context/Authcontext";
 import { toast } from "sonner";
 
@@ -12,12 +12,12 @@ export default function ProductDetails() {
   useEffect(() => {
     const getProduct = async () => {
       try {
-        const response = await axios.get(
-          `https://ecommerce-api-ten-jade.vercel.app/api/v1/products/${id}`
+        const response = await api.get(
+          `/products/${id}`
         );
-  
-        setProduct(response.data.data.product);
-        console.log(response.data.data.product);
+
+        setProduct(response.data.data);
+        console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -32,20 +32,13 @@ export default function ProductDetails() {
       return;
     }
   try {
-    const token = localStorage.getItem("accessToken");
-    console.log(token);
-
-    const response = await axios.post(
-      "https://ecommerce-api-ten-jade.vercel.app/api/v1/cart/items",
+    
+    const response = await api.post(
+      "/cart/items",
       {
         productId: product.id,
         quantity: 1
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
     );
     console.log(response.data);
   } catch (error) {
@@ -55,15 +48,9 @@ export default function ProductDetails() {
 useEffect(() => {
   const getCart = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
-
-      const response = await axios.get(
-        "https://ecommerce-api-ten-jade.vercel.app/api/v1/cart",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      
+      const response = await api.get(
+        "/cart",
       );
 
       console.log(response.data);

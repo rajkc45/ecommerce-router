@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api/axios";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast, Toaster } from 'sonner';
@@ -13,47 +13,46 @@ const [lastName, setLastName] = useState("");
   const [error, setError]       = useState("");
   const navigate                = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!firstName||!lastName|| !email || !password || !confirm) {
-      setError("Please fill in all fields.");
-      return;
-    }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
-    if (password !== confirm) {
-      setError("Passwords do not match.");
-      return;
-    }
+  if (!firstName || !lastName || !email || !password || !confirm) {
+    setError("Please fill in all fields.");
+    return;
+  }
 
-    // TODO: connect to your auth API here
-    try{
-      const response= await axios.post(
-        "https://ecommerce-api-ten-jade.vercel.app/api/v1/auth/signup",
-        {
-          firstName,
-          lastName,
-          email,
-          password,
-        }
-      );
-    
-      const token= response.data.data.accessToken;
+  if (password.length < 8) {
+    setError("Password must be at least 8 characters.");
+    return;
+  }
 
-      localStorage.setItem("accessToken", token);
-       
-    console.log("signup sucessful");
-     toast("signup sucessful");
-    } catch(error){
-      console.log(error);
-      toast(error.message);
-    }
+  if (password !== confirm) {
+    setError("Passwords do not match.");
+    return;
+  }
 
-    navigate("/dashboard");
-  };
+  try {
+    const response = await api.post("/auth/register", {
+      name: `${firstName} ${lastName}`,
+      email,
+      password,
+    });
+
+    console.log(response.data);
+
+    toast.success("Signup successful");
+
+    navigate("/signin");
+  } catch (error) {
+    console.error(error);
+
+    const message =
+      error.response?.data?.message || "Signup failed";
+
+    setError(message);
+    toast.error(message);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#080c10] flex items-center justify-center px-4">

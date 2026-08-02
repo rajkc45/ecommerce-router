@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 import ProductCard from "../components/Productcard";
 import Loading from "./Loading";
 
@@ -10,40 +10,41 @@ export default function Products() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-
-  useEffect(() => {
+useEffect(() => {
+  const fetchProducts = async () => {
     setLoading(true);
-    const url = category
-      ? `https://ecommerce-api-ten-jade.vercel.app/api/v1/products?category=${category}`
-      : "https://ecommerce-api-ten-jade.vercel.app/api/v1/products";
 
-    axios
-      .get(url)
-      .then((res) => {
-        console.log(res.data.data.items, "products");
-        setProducts(res.data.data.items || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setProducts([]);
-        setLoading(false);
+    try {
+      const response = await api.get("/products", {
+        params: category ? { category } : {},
       });
-  }, [category]);
 
+      console.log(response.data.data.products);
+
+      setProducts(response.data.data.products || []);
+    } catch (error) {
+      console.error(error);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, [category]);
   if (loading) return <Loading />;
 
   return (
     <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex products-center justify-between">
         <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
           {category ? `Category: ${category}` : "All Products"}
         </h2>
-        <span className="text-xs text-gray-400 dark:text-gray-500">{products.length} items</span>
+        <span className="text-xs text-gray-400 dark:text-gray-500">{products.length} products</span>
       </div>
 
       {products.length === 0 ? (
-        <div className="flex h-[40vh] items-center justify-center">
+        <div className="flex h-[40vh] products-center justify-center">
           <p className="text-gray-400 dark:text-gray-500">No products found.</p>
         </div>
       ) : (

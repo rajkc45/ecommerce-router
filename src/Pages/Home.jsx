@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
 import Hero from "../components/Hero";
 import ProductCard from "../components/ProductCard";
 
@@ -8,12 +8,12 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("https://ecommerce-api-ten-jade.vercel.app/api/v1/products")
+    api
+      .get("/products")
       .then((res) => {
         console.log(res)
-        console.log(res.data.data.items)
-        setProducts(res.data.data.items || []);
+        console.log(res.data.data.products)
+        setProducts(res.data.data.products || []);
         setLoading(false);
       })
       .catch((err) => {

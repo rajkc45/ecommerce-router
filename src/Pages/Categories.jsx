@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import api from "../api/axios";
 import { Link } from "react-router-dom";
 import Loading from "./Loading";
 
@@ -7,17 +8,21 @@ export default function Categories() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://ecommerce-api-ten-jade.vercel.app/api/v1/products/categories")
-      .then((res) => res.json())
-      .then((data) => {
-        setCategories(data.data.items);
-        setLoading(false);
-      })
-      .catch(() => {
-        setCategories([]);
-        setLoading(false);
-      });
-  }, []);
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get("/products/categories");
+
+      setCategories(response.data.data || []);
+    } catch (error) {
+      console.error(error);
+      setCategories([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchCategories();
+}, []);
 
   if (loading) return <Loading />;
 

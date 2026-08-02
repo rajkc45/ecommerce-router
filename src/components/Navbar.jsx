@@ -102,10 +102,10 @@ export default function Navbar() {
         {user ? (
           <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-gray-800">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-semibold text-white">
-              {/* {user.name[0].toUpperCase()} */}
+              {user.firstName.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{user.name}</p>
+              <p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{user.firstName}</p>
               <button onClick={logout} className="truncate text-xs text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400">
                 Sign out
               </button>

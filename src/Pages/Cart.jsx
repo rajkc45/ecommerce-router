@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axios";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const token = localStorage.getItem("accessToken");
-
+  
   const getCart = async () => {
     try {
-      const response = await axios.get(
-        "https://ecommerce-api-ten-jade.vercel.app/api/v1/cart",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await api.get(
+        "/cart",
+        
       );
 
-      setCartItems(response.data.data.cart.items);
-      setTotal(response.data.data.cart.summary.total);
+     const cart = response.data.data;
+
+setCartItems(cart.items || []);
+
+const total = cart.items.reduce(
+  (sum, item) => sum + item.product.price * item.quantity,
+  0
+);
+
+setTotal(total);
     } catch (error) {
       console.log(error.response?.data || error);
     } finally {
@@ -30,13 +33,8 @@ export default function Cart() {
 
   const clearCart = async () => {
     try {
-      await axios.delete(
-        "https://ecommerce-api-ten-jade.vercel.app/api/v1/cart",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      await api.delete(
+        "/cart",
       );
 
       setCartItems([]);
@@ -59,7 +57,7 @@ export default function Cart() {
       <h1 className="text-3xl font-bold mb-6">My Cart</h1>
 
       {cartItems.length === 0 ? (
-        <h2>kina na kina 🤪.</h2>
+        <h2>kindim kindim 🤪.</h2>
       ) : (
         <>
           {cartItems.map((item) => (
@@ -68,7 +66,7 @@ export default function Cart() {
               className="flex items-center gap-5 border rounded-lg p-4 mb-4"
             >
               <img
-                src={item.product.image}
+                src={item.product.images}
                 alt={item.product.title}
                 className="w-28 h-28 object-cover"
               />

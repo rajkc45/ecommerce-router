@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/Authcontext";
-import axios from 'axios';
 import SignUp from "./Signup";
+import api from "../api/axios";
 
 export default function Login() {
   const { login, guestLogin, userStatus } = useContext(AuthContext);
@@ -19,15 +19,11 @@ export default function Login() {
     setSubmitting(true);
     try {
       console.log("button clickerd");
-      const response= await axios.post(
-        "https://ecommerce-api-ten-jade.vercel.app/api/v1/auth/login",
-        {
-          email,
-          password,
-        }
-      );
-    
-      
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
+
       const token = response.data.data.accessToken;
       localStorage.setItem("accessToken", token);
       await userStatus();
