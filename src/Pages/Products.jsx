@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import api from "../api/axios";
-import ProductCard from "../components/Productcard";
+import ProductCard from "../components/ProductCard";
 import Loading from "./Loading";
 
 export default function Products() {
   const [searchParams] = useSearchParams();
   const category = searchParams.get("category");
+  const categoryName = searchParams.get("categoryName");
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,8 +38,9 @@ useEffect(() => {
   return (
     <div className="p-6">
       <div className="mb-6 flex products-center justify-between">
-        <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-          {category ? `Category: ${category}` : "All Products"}
+       
+       <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+  {categoryName ? `Category: ${categoryName}` : "All Products"}
         </h2>
         <span className="text-xs text-gray-400 dark:text-gray-500">{products.length} products</span>
       </div>

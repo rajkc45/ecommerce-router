@@ -3,9 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import api from "../api/axios";
 import { AuthContext } from "../context/Authcontext";
 import { toast } from "sonner";
+import { CartContext } from "../context/CartContext";
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const { refreshCartCount } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,15 +36,18 @@ export default function ProductDetails() {
   try {
     
     const response = await api.post(
-      "/cart/items",
+      "/cart",
       {
         productId: product.id,
         quantity: 1
       },
     );
+    toast.success("Added to cart");
+    refreshCartCount();
     console.log(response.data);
   } catch (error) {
-    console.log(error);
+    console.log(error.response?.data || error);
+    toast.error(error.response?.data?.message || "Failed to add to cart");
   }
 };
 useEffect(() => {
@@ -89,7 +94,7 @@ useEffect(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="flex items-center justify-center rounded-2xl bg-gray-50 p-8 dark:bg-gray-800">
           <img
-            src={product.images?.[0] || "https://placehold.co/600x600?text=No+Image"}
+            src={product.image || "https://placehold.co/600x600?text=No+Image"}
             alt={product.name}
             onError={(e) => { e.target.src = "https://placehold.co/600x600?text=No+Image"; }}
             className="max-h-96 w-full object-contain"
@@ -107,7 +112,7 @@ useEffect(() => {
 
           <div className="mb-4 flex items-center gap-3">
             <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              ${product.price}
+              NPR {product.price}
             </span>
             <span className="flex items-center gap-1 rounded-full bg-yellow-50 px-2.5 py-1 text-sm font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
               ★ {product.rating}

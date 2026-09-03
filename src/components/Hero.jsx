@@ -11,12 +11,10 @@ export default function Hero() {
         </p>
 
         <h1 className="mb-4 text-4xl font-bold text-gray-900 sm:text-5xl dark:text-gray-100">
-          ECOMMERCE-ROUTER {data.user?.name },
-          <br />
-          New StartUp :
+          ECOMMERCE-ROUTER 
         </h1>
         <p className="mx-auto max-w-xl text-gray-500 dark:text-gray-400">
-          Be fake , Wear Fake , Stay Fake , Hide your real identity niggas &#x2019;
+          Be real stay cool 
         </p>
       </div>
     </section>

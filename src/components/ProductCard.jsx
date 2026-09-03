@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const FALLBACK_IMG = "https://placehold.co/400x400?text=No+Image";
 
 export default function ProductCard({ product }) {
-  const [imgSrc, setImgSrc] = useState(product.images?.[0] || FALLBACK_IMG);
+  const [imgSrc, setImgSrc] = useState(product.image || FALLBACK_IMG);
 
   return (
     <Link
@@ -24,7 +24,7 @@ export default function ProductCard({ product }) {
         <h3 className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
           {product.name}
         </h3>
-        <p className="text-base font-bold text-indigo-600 dark:text-indigo-400">${product.price}</p>
+        <p className="text-base font-bold text-indigo-600 dark:text-indigo-400">NPR {product.price}</p>
       </div>
     </Link>
   );

@@ -41,8 +41,8 @@ export default function Categories() {
         <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
           {categories.map((cat) => (
             <Link
-              key={cat.slug}
-              to={`/products?category=${cat.slug}`}
+              key={cat.id}
+              to={`/products?category=${cat.id}&categoryName=${encodeURIComponent(cat.name)}`}
               className="group flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-8 text-center transition-all hover:-translate-y-1 hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700"
             >
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-50 group-hover:bg-indigo-100 dark:bg-indigo-900/30 dark:group-hover:bg-indigo-900/50">
@@ -51,7 +51,7 @@ export default function Categories() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6Z" />
                 </svg>
               </div>
-              <h3 className="text-sm font-semibold capitalize text-gray-900 dark:text-gray-100">{cat.name || cat.slug}</h3>
+              <h3 className="text-sm font-semibold capitalize text-gray-900 dark:text-gray-100">{cat.name}</h3>
             </Link>
           ))}
         </div>

@@ -2,12 +2,14 @@ import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../context/Authcontext";
 import { ThemeContext } from "../context/Themecontext";
+import { CartContext } from "../context/CartContext";
 
 const links = [
   { to: "/", label: "Home", icon: "home" },
   { to: "/products", label: "Products", icon: "products" },
   { to: "/categories", label: "Categories", icon: "categories" },
   { to: "/cart", label: "Cart", icon: "cart" },
+  { to: "/orders", label: "My Orders", icon: "orders" },
 ];
 
 const icons = {
@@ -32,11 +34,22 @@ const icons = {
       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
     </svg>
   ),
+  addProduct: (
+    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+  ),
+  orders: (
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25Z" />
+  </svg>
+),
 };
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const { cartCount } = useContext(CartContext);
 
   return (
     <aside className="fixed left-0 top-0 z-50 flex h-screen w-60 flex-col border-r border-gray-100 bg-white dark:border-gray-800 dark:bg-gray-900">
@@ -54,6 +67,30 @@ export default function Navbar() {
 
       <nav className="flex-1 space-y-1 px-3 py-5">
         {links.map((link) => (
+  link.to === "/cart" ? (
+    <NavLink
+      key={link.to}
+      to={link.to}
+      className={({ isActive }) =>
+        [
+          "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+          isActive
+            ? "bg-indigo-50 text-indigo-700 shadow-sm dark:bg-indigo-900/30 dark:text-indigo-400"
+            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200",
+        ].join(" ")
+      }
+    >
+      <span className="relative flex h-8 w-8 items-center justify-center rounded-lg">
+        {icons.cart}
+        {cartCount > 0 && (
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+            {cartCount > 9 ? "9+" : cartCount}
+          </span>
+        )}
+      </span>
+      {link.label}
+    </NavLink>
+  ) : (
           <NavLink
             key={link.to}
             to={link.to}
@@ -77,7 +114,46 @@ export default function Navbar() {
             </span>
             {link.label}
           </NavLink>
+      )
         ))}
+        
+
+        {user?.role === "ADMIN" && (
+          <NavLink
+            to="/admin/add-product"
+            className={({ isActive }) =>
+              [
+                "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+                isActive
+                  ? "bg-indigo-50 text-indigo-700 shadow-sm dark:bg-indigo-900/30 dark:text-indigo-400"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200",
+              ].join(" ")
+            }
+          >
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg">
+              {icons.addProduct}
+            </span>
+            Add Product
+          </NavLink>
+        )}
+        {user?.role === "ADMIN" && (
+  <NavLink
+    to="/admin/orders"
+    className={({ isActive }) =>
+      [
+        "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
+        isActive
+          ? "bg-indigo-50 text-indigo-700 shadow-sm dark:bg-indigo-900/30 dark:text-indigo-400"
+          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200",
+      ].join(" ")
+    }
+  >
+    <span className="flex h-8 w-8 items-center justify-center rounded-lg">
+      {icons.orders}
+    </span>
+    All Orders
+  </NavLink>
+)}
 
         <button
           onClick={toggleTheme}
@@ -100,18 +176,30 @@ export default function Navbar() {
 
       <div className="border-t border-gray-100 p-4 dark:border-gray-800">
         {user ? (
-          <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-gray-800">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-semibold text-white">
-              {user?.name?.charAt(0)?.toUpperCase()|| "U"}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{user?.name || "User"}</p>
-              <button onClick={logout} className="truncate text-xs text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400">
-                Sign out
-              </button>
-            </div>
-          </div>
-        ) : (
+  <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-gray-800">
+    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-xs font-semibold text-white">
+      {user?.name?.charAt(0)?.toUpperCase()|| "U"}
+    </div>
+    <div className="min-w-0 flex-1">
+      <div className="flex items-center gap-1.5">
+        <p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{user?.name || "User"}</p>
+        <span
+          className={[
+            "shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide",
+            user?.role === "ADMIN"
+              ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400"
+              : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
+          ].join(" ")}
+        >
+          {user?.role === "ADMIN" ? "Admin" : "User"}
+        </span>
+      </div>
+      <button onClick={logout} className="truncate text-xs text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400">
+        Sign out
+      </button>
+    </div>
+    </div>
+    ) : (
           <NavLink
             to="/signin"
             className="flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"

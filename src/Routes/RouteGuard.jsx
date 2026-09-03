@@ -34,3 +34,20 @@ export function SemiProtectedRoute({ children }) {
 
   return children;
 }
+export function AdminRoute({ children }) {
+  const { user, isAuthenticated, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  if (user?.role !== "ADMIN") {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
